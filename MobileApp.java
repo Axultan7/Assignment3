@@ -118,9 +118,9 @@ public class MobileApp {
 
     public static void main(String[] args) {
         MobileApp app1 = new MobileApp(new OpenWeatherMapAdapter(new OpenWeatherMapProvider()));
-        app1.displayWeather("New York");
+        app1.displayWeather("Taraz");
 
         MobileApp app2 = new MobileApp(new WeatherAPIAdapter(new WeatherAPIProvider()));
-        app2.displayWeather("Los Angeles");
+        app2.displayWeather("Almaty");
     }
 }
