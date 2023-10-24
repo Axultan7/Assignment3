@@ -1,0 +1,126 @@
+package Assignment3;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class WeatherData {
+    private String location;
+    private double temperature;
+    private String condition;
+
+    public WeatherData(String location, double temperature, String condition) {
+        this.location = location;
+        this.temperature = temperature;
+        this.condition = condition;
+    }
+
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    @Override
+    public String toString() {
+        return "Location: " + location + ", Temperature: " + temperature + "°C, Condition: " + condition;
+    }
+}
+
+interface WeatherProvider {
+    WeatherData getWeather(String location);
+}
+
+
+class OpenWeatherMapProvider implements WeatherProvider {
+    @Override
+    public WeatherData getWeather(String location) {
+
+        Map<String, Object> apiData = new HashMap<>();
+        apiData.put("city", location);
+        apiData.put("temperature", 25.5);
+        apiData.put("conditions", "Sunny");
+
+        return new WeatherData((String) apiData.get("city"), (double) apiData.get("temperature"), (String) apiData.get("conditions"));
+    }
+}
+
+class WeatherAPIProvider implements WeatherProvider {
+    @Override
+    public WeatherData getWeather(String location) {
+
+        Map<String, Object> apiData = new HashMap<>();
+        apiData.put("location", location);
+        apiData.put("temp", 27.0);
+        apiData.put("weather", "Clear");
+
+        return new WeatherData((String) apiData.get("location"), (double) apiData.get("temp"), (String) apiData.get("weather"));
+    }
+}
+
+
+class OpenWeatherMapAdapter implements WeatherProvider {
+    private OpenWeatherMapProvider provider;
+
+    public OpenWeatherMapAdapter(OpenWeatherMapProvider provider) {
+        this.provider = provider;
+    }
+
+    @Override
+    public WeatherData getWeather(String location) {
+        return provider.getWeather(location);
+    }
+}
+
+class WeatherAPIAdapter implements WeatherProvider {
+    private WeatherAPIProvider provider;
+
+    public WeatherAPIAdapter(WeatherAPIProvider provider) {
+        this.provider = provider;
+    }
+
+    @Override
+    public WeatherData getWeather(String location) {
+        return provider.getWeather(location);
+    }
+}
+
+
+public class MobileApp {
+    private WeatherProvider weatherProvider;
+
+    public MobileApp(WeatherProvider weatherProvider) {
+        this.weatherProvider = weatherProvider;
+    }
+
+    public void displayWeather(String location) {
+        WeatherData data = weatherProvider.getWeather(location);
+        System.out.println(data);
+    }
+
+    public static void main(String[] args) {
+        MobileApp app1 = new MobileApp(new OpenWeatherMapAdapter(new OpenWeatherMapProvider()));
+        app1.displayWeather("New York");
+
+        MobileApp app2 = new MobileApp(new WeatherAPIAdapter(new WeatherAPIProvider()));
+        app2.displayWeather("Los Angeles");
+    }
+}
